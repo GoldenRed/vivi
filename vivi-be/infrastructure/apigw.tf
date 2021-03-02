@@ -81,9 +81,11 @@ resource "aws_lambda_permission" "apigw_lambda" {
 	function_name = aws_lambda_function.lambda.function_name
 	principal = "apigateway.amazonaws.com"
 
-	source_arn = "arn:aws:execute-api:${var.region}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.api.id}/*/${aws_api_gateway_method.method.http_method}/${aws_api_gateway_resource.resource.path}"
-
+	source_arn = "arn:aws:execute-api:${var.region}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.api.id}/*/*" 
 }
+
+# ${aws_api_gateway_method.method.http_method}/${aws_api_gateway_resource.resource.path}"
+
 
 data "archive_file" "lambda_zip" {
 	type = "zip"
@@ -94,7 +96,7 @@ data "archive_file" "lambda_zip" {
 
 resource "aws_lambda_function" "lambda" {
 	filename = "lambda.zip"
-	function_name = "mylambda"
+	function_name = "lambda"
 	role = aws_iam_role.lambda_role.arn
 	handler = "lambda.lambda_handler"
 	runtime = "python3.8"
