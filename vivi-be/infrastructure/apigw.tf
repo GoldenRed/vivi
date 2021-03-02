@@ -6,7 +6,7 @@ resource "aws_api_gateway_rest_api" "api" {
 resource "aws_api_gateway_resource" "resource" {
 	rest_api_id = aws_api_gateway_rest_api.api.id
 	parent_id = aws_api_gateway_rest_api.api.root_resource_id
-	path_part = "resource"
+	path_part = "search"
 }
 
 resource "aws_api_gateway_method" "method" {
@@ -14,6 +14,7 @@ resource "aws_api_gateway_method" "method" {
 	resource_id = aws_api_gateway_resource.resource.id
 	http_method = "GET"
 	authorization = "NONE"
+	request_parameters = {"method.request.querystring.q"=true}
 }
 
 resource "aws_api_gateway_integration" "integration" {
@@ -33,11 +34,11 @@ resource "aws_api_gateway_account" "demo" {
 resource "aws_api_gateway_deployment" "deployment_alpha" {
 	rest_api_id = aws_api_gateway_rest_api.api.id
 
-	triggers = {
+	triggers = { #https://github.com/hashicorp/terraform-provider-aws/issues/162
 		redeployment = sha1(jsonencode([
-		  aws_api_gateway_resource.resource.id,
-		  aws_api_gateway_method.method.id,
-		  aws_api_gateway_integration.integration.id,
+		  aws_api_gateway_resource.resource,
+		  aws_api_gateway_method.method,
+		  aws_api_gateway_integration.integration,
 		]))
 	
 	}
@@ -73,61 +74,8 @@ resource "aws_api_gateway_method_settings" "general_settings" {
 }
 
 
-# LAMBDA
-
-resource "aws_lambda_permission" "apigw_lambda" {
-	statement_id = "AllowExecutionFromAPIGateway"
-	action = "lambda:InvokeFunction"
-	function_name = aws_lambda_function.lambda.function_name
-	principal = "apigateway.amazonaws.com"
-
-	source_arn = "arn:aws:execute-api:${var.region}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.api.id}/*/*" 
-}
-
-# ${aws_api_gateway_method.method.http_method}/${aws_api_gateway_resource.resource.path}"
-
-
-data "archive_file" "lambda_zip" {
-	type = "zip"
-	source_dir = "source"
-	output_path = "lambda.zip"
-}
-
-
-resource "aws_lambda_function" "lambda" {
-	filename = "lambda.zip"
-	function_name = "lambda"
-	role = aws_iam_role.lambda_role.arn
-	handler = "lambda.lambda_handler"
-	runtime = "python3.8"
-	source_code_hash = data.archive_file.lambda_zip.output_base64sha256
-}
-
-
-
 
 # IAM
-
-resource "aws_iam_role" "lambda_role" {
-	name = "apigw-lambda-role"
-
-	assume_role_policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  	"Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "lambda.amazonaws.com"
-      },
-      "Effect": "Allow",
-      "Sid": ""
-    }
-  ]
-}
-POLICY
-}
-
 
 resource "aws_iam_role" "cloudwatch_role" {
   name = "api_gateway_cloudwatch_global"
@@ -148,8 +96,6 @@ resource "aws_iam_role" "cloudwatch_role" {
 }
 EOF
 }
-
-
 
 resource "aws_iam_role_policy" "cloudwatch_role" {
 	name = "default"

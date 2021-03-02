@@ -37,8 +37,17 @@ resource "aws_elasticsearch_domain_policy" "main" {
                 "IpAddress": {"aws:SourceIp": "151.236.200.62/32"}
             },
             "Resource": "${aws_elasticsearch_domain.vivi.arn}/*"
-        }
+        },
+	{
+            "Effect": "Allow",
+            "Principal": {
+              "AWS": "*"
+            },
+            "Action": "es:ESHttpGet",
+            "Resource": "${aws_elasticsearch_domain.vivi.arn}/movies/_search"
+	}
     ]
 }
 POLICIES
 }
+
