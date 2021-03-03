@@ -1,13 +1,25 @@
 module "api" {
 	source = "./api_infrastructure"
+
+	environment = var.environment
+	region = var.region
+	project = var.project
 }
 
 module "es" {
 	source = "./search_infrastructure"
+
+	environment = var.environment
+	region = var.region
+	project = var.project
 }
 
 module "filestore" {
 	source = "./filestore_infrastructure"
+
+	environment = var.environment
+	region = var.region
+	project = var.project
 }
 
 
