@@ -1,3 +1,4 @@
+
 module "api" {
 	source = "./api_infrastructure"
 
@@ -14,6 +15,18 @@ module "es" {
 	project = var.project
 }
 
+output "api_alpha_url" {
+	value = module.api.api_alpha_stage_url
+	}
+output "direct-es-domain-url" {
+	value = module.es.es-domain-url
+	}
+output "kibana-url" {
+	value = module.es.kibana-url
+	}
+
+
+
 module "filestore" {
 	source = "./filestore_infrastructure"
 
@@ -22,14 +35,3 @@ module "filestore" {
 	project = var.project
 }
 
-
-
-output "api_alpha_url" {
-	value = module.api.api_alpha_stage_url
-}
-output "direct-es-domain-url" {
-	value = module.es.es-domain-url
-}
-output "kibana-url" {
-	value = module.es.kibana-url
-}
