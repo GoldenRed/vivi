@@ -33,5 +33,7 @@ module "filestore" {
 	environment = var.environment
 	region = var.region
 	project = var.project
+
+	es_url = module.es.es-domain-url
 }
 

@@ -14,14 +14,19 @@ resource "aws_lambda_function" "s3-to-es" {
 	filename = "${path.module}/s3-to-es_lambda.zip"
 	function_name = "s3-to-es"
 	role = aws_iam_role.lambda_role.arn
-	handler = "lambda.handler"
+	handler = "s3-to-es-lambda.handler"
 	runtime = "python3.8"
 	source_code_hash = data.archive_file.s3-to-es_lambda_zip.output_base64sha256
 
 	depends_on = [
-	aws_iam_role_policy_attachment.lambda_logs
+		aws_iam_role_policy_attachment.lambda_logs
 	]
-
+	
+	environment {
+		variables = {
+			es_domain_url = var.es_url
+			}
+		}
 }
 
 
@@ -37,7 +42,7 @@ resource "aws_lambda_function" "s3-to-ddb" {
 	filename = "${path.module}/s3-to-ddb_lambda.zip"
 	function_name = "s3-to-ddb"
 	role = aws_iam_role.lambda_role.arn
-	handler = "lambda.handler"
+	handler = "s3-to-ddb-lambda.handler"
 	runtime = "python3.8"
 	source_code_hash = data.archive_file.s3-to-ddb_lambda_zip.output_base64sha256
 }

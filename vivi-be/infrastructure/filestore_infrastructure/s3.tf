@@ -15,6 +15,5 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
 	topic {
 		topic_arn = aws_sns_topic.s3-upload-topic.arn
 		events = ["s3:ObjectCreated:*"]
-		filter_suffix = ".test"
 	}
 }
