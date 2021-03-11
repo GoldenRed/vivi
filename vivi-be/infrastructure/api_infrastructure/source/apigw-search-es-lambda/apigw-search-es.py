@@ -1,5 +1,5 @@
 import boto3
-import json
+import json, os
 import requests
 from requests_aws4auth import AWS4Auth
 
@@ -8,9 +8,9 @@ service = 'es'
 credentials = boto3.Session().get_credentials()
 awsauth = AWS4Auth(credentials.access_key, credentials.secret_key, region, service, session_token=credentials.token)
 
-host = 'search-vivi-searchengine-dev-nenfwjcxlt4hep3znsn66mizye.us-east-1.es.amazonaws.com' # For example, search-mydomain-id.us-west-1.es.amazonaws.com
+host = os.environ['es_domain_url']
 index = 'movies'
-url = 'https://' + host + '/' + index + '/_search'
+url = host + '/' + index + '/_search'
 
 # Lambda execution starts here
 def handler(event, context):

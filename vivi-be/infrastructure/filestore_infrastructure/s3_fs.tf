@@ -1,8 +1,7 @@
-
 resource "aws_s3_bucket" "filestore" {
-	bucket_prefix = join("-", [var.project, "filestore", var.environment])
+	bucket_prefix = join("-", [var.project, "file", "store", var.environment])
 	tags = {
-		Name = "filestore"
+		Name = "File Store"
 		Project = var.project 
 		Environment = var.environment
 	}
