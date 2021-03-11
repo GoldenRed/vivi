@@ -1,30 +1,30 @@
-import React from 'react'
-import 'antd/dist/antd.css';
-
+import React, { useEffect, useState } from 'react';
 import './App.css';
-import Top from './Components/Top';
-import Recommendations from './Components/Recommendations';
-import { Layout } from 'antd';
 
-const { Footer } = Layout;
+import Top from './components/Top.js';
+import Mid from './components/Mid.js';
 
-function App() {
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+const App = ()=>{
+
+  const [videos, setVideos] = useState([]);
+
+
+  const getData = async () => {
+    const url = `http://jsonplaceholder.typicode.com/photos` 
+    const response = await fetch(url);
+    console.log(response);
+  }
+
   return (
-    <div className="app">
+  <div className="App">
+  <Top />
 
-    <Layout>
-  
-      <Top />
-      <Recommendations />
+  <Mid />
 
-
-
-      <Footer> Check it out at https://goldenred.github.io/ </Footer>
-
-    </Layout>
-  
-    </div>
+  </div>
   );
-}
+};
 
 export default App;
