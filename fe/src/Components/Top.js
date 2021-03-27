@@ -7,7 +7,17 @@ import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
 
 
-function Top() {
+function Top({setVideos}) {
+
+  const getData = async () => { 
+    const response = await fetch(`http://jsonplaceholder.typicode.com/photos`);
+    const data = await response.json();
+    console.log(data);
+    setVideos(data)
+  }
+
+
+
   return (
 
     <Navbar bg="dark" expand="lg" variant="dark" fixed="top">
@@ -21,7 +31,7 @@ function Top() {
     </Navbar.Collapse>
     <Form inline>
       <FormControl type="text" placeholder="Search" className="mr-sm-2" />
-      <Button variant="outline-info">Search</Button>
+      <Button onClick={getData} variant="outline-info">Search</Button>
     </Form>
 
   </Navbar>
