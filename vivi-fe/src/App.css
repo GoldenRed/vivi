@@ -1,0 +1,29 @@
+.App {
+  text-align: center;
+  min-height: 100vh;
+  background-image: gradient(90deg, rgba(2,0,36,1) 0%, rgba(120,45,30,1) 35%, rgba(108,29,23,1) 100%);
+}
+
+.search-form{
+  min-height:10vh;
+  display:flex;
+  justify-content:center;
+  align-items: center;
+}
+
+.search-bar{
+  width: 50%;
+  border: none;
+  padding: 10px;
+}
+
+.search-button{
+  background-image: linear-gradient(to top, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+  border: none;
+  padding: 10px 20px;
+  margin: 10px;
+}
+
+.stations{
+  margin-left: 10%;
+}
