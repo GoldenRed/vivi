@@ -1,0 +1,5 @@
+{ "index": { "_index": "missing", "_type": "missing", "_id": "5f9e8e77-ad92-44c6-8cd5-32772773fa3a" } }
+{"fields":{"name":["Freweini"],"missing_date":"2020-11-18T00:00:00Z","age_missing":5,"hometown":["Axum","ኣኽሱም", "አክሱም"],"image_url":"https://vivi-file-store-dev20210327204517962500000001.s3.amazonaws.com/9aa6e287-dae3-43cc-bb38-a24bede56bee/image.jpg","description":"Freweini was found in Mekelle having fled with many others from the outskirts of Axum. We estimate that she was separated from her family on the 18th of November."},"id":"5f9e8e77-ad92-44c6-8cd5-32772773fa3a","type":"add"}
+{ "index": { "_index": "missing", "_type": "missing", "_id": "9aa6e287-dae3-43cc-bb38-a24bede56bee" } }
+{"fields":{"name":["Abiel"],"missing_date":"2021-01-05T00:00:00Z","age_missing":10,"hometown":["Humera","ሑመራ", "ሑመራ"],"image_url":"https://vivi-file-store-dev20210327204517962500000001.s3.amazonaws.com/5f9e8e77-ad92-44c6-8cd5-32772773fa3a/image.jpg","description":"Abiel was found in Shire having fled with his neighbours from Humera. We estimate that he was separated from family on the 5th of January."},"id":"9aa6e287-dae3-43cc-bb38-a24bede56bee","type":"add"}
+

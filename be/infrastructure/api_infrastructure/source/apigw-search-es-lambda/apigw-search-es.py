@@ -9,20 +9,18 @@ credentials = boto3.Session().get_credentials()
 awsauth = AWS4Auth(credentials.access_key, credentials.secret_key, region, service, session_token=credentials.token)
 
 host = os.environ['es_domain_url']
-index = 'movies'
-url = host + '/' + index + '/_search'
+index = 'missing'
+url = 'https://' + host + '/' + index + '/_search'
 
 # Lambda execution starts here
 def handler(event, context):
 
     # Put the user query into the query DSL for more accurate search results.
-    # Note that certain fields are boosted (^).
     query = {
         "size": 25,
         "query": {
             "multi_match": {
                 "query": event['queryStringParameters']['q'],
-                "fields": ["fields.title^4", "fields.plot^2", "fields.actors", "fields.directors"]
             }
         }
     }

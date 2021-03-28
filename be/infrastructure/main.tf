@@ -30,6 +30,15 @@ module "filestore" {
 	es_url = module.es.es-domain-url
 }
 
+module "fe" {
+	source = "./frontend_infrastructure"
+
+	environment = var.environment
+	region = var.region
+	project = var.project
+
+}
+
 
 output "api_alpha_url" {
 	value = module.api.api_alpha_stage_url
@@ -41,3 +50,7 @@ output "direct-es-domain-url" {
 output "kibana-url" {
 	value = module.es.kibana-url
 	}
+
+output "website-endpoint" {
+	value = module.fe.frontend_bucket_endpoint
+}

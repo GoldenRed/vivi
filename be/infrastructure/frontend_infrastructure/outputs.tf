@@ -1,4 +1,4 @@
 
-output "frontend_bucket_id" {
+output "frontend_bucket_endpoint" {
 	value = aws_s3_bucket.frontend.website_endpoint
 }

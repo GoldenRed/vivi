@@ -1,4 +1,4 @@
-resource "aws_elasticsearch_domain" "vivi" {
+resource "aws_elasticsearch_domain" "server" {
 	domain_name = join("-", [var.project, "searchengine", var.environment])
 	elasticsearch_version = "7.9"
 
@@ -23,7 +23,7 @@ resource "aws_elasticsearch_domain" "vivi" {
 }
 
 resource "aws_elasticsearch_domain_policy" "main" {
-  domain_name = aws_elasticsearch_domain.vivi.domain_name
+  domain_name = aws_elasticsearch_domain.server.domain_name
 
   access_policies = <<POLICIES
 {
@@ -34,9 +34,9 @@ resource "aws_elasticsearch_domain_policy" "main" {
             "Principal": "*",
             "Effect": "Allow",
             "Condition": {
-                "IpAddress": {"aws:SourceIp": "151.236.200.62/32"}
+                "IpAddress": {"aws:SourceIp": "${chomp(data.http.myip.body)}/32"}
             },
-            "Resource": "${aws_elasticsearch_domain.vivi.arn}/*"
+            "Resource": "${aws_elasticsearch_domain.server.arn}/*"
         },
 	{
             "Effect": "Allow",
@@ -44,10 +44,15 @@ resource "aws_elasticsearch_domain_policy" "main" {
               "AWS": "*"
             },
             "Action": "es:ESHttpGet",
-            "Resource": "${aws_elasticsearch_domain.vivi.arn}/movies/_search"
+            "Resource": "${aws_elasticsearch_domain.server.arn}/missing/_search"
 	}
     ]
 }
 POLICIES
 }
 
+
+## We want to allow access to the domain for our own IP address specifically.
+data "http" "myip" {
+    url = "https://ip.seeip.org/"
+}

@@ -8,17 +8,17 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App = ()=>{
 
-  const [videos, setVideos] = useState([]);
+  const [missings, setMissings] = useState([]);
 
 
 
 
   return (
   <div className="App">
-  <Top setVideos={setVideos} />
+  <Top missings={missings}
+   setMissings={setMissings} />
   
-
-  <Mid videos={videos} />
+  <Mid missings={missings} />
 
   </div>
   );

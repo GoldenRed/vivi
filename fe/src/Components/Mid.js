@@ -4,20 +4,20 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import Video from './Video.js'
+import Missing from './Missing.js'
 
-function Mid({videos}) {
+function Mid({missings}) {
 
   
   return (
   <Container style={{paddingTop: 60, display: 'flex', flexWrap: 'wrap'}}>
-    {videos.map((videoItem, idx) => (
-
+    {missings.map((missingPerson, idx) => (
+      console.log(missingPerson),
       <Row key={idx}>
-        <Video 
-          thumbnailImg={videoItem.thumbnailUrl} 
-          videoTitle={videoItem.title} 
-          videoDescription={videoItem.thumbnailUrl}  />
+        <Missing 
+          personName={missingPerson._source.fields.name[0]} 
+          profileImage={missingPerson._source.fields.image_url} 
+          missingDescription={missingPerson._source.fields.description}  />
       </Row>
         )
       )
