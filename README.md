@@ -1,2 +1,2 @@
 # vivi
-Project for interacting with videos on S3, with search.
+Project for interacting with es, s3, and more services.
