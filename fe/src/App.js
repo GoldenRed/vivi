@@ -1,26 +1,31 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import './App.css';
 
-import Top from './Components/Top.js';
-import Mid from './Components/Mid.js';
+
+import { BrowserRouter, Route, Switch} from 'react-router-dom';
+import Nav from './Pages/Nav.js';
+import SearchPage from './Pages/SearchPage/SearchPage.js';
+import About from './Pages/About/About.js';
+import Submit from './Pages/Submit/Submit.js';
+import Item from './Pages/SearchPage/Item.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const App = ()=>{
-
-  const [missings, setMissings] = useState([]);
-
-
-
+function App() {
 
   return (
-  <div className="App">
-  <Top missings={missings}
-   setMissings={setMissings} />
-  
-  <Mid missings={missings} />
+  <BrowserRouter>
+    <div className="App">
+      <Nav />
+      <Switch>
+        <Route path="/" exact component={SearchPage} />
+        <Route path="/item/:id" component={Item} />
+        <Route path="/about" component={About} />
+        <Route path="/submit" component={Submit} />
+      </Switch>
 
-  </div>
+    </div>
+  </BrowserRouter>
   );
 };
 
