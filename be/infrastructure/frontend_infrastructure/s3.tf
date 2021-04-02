@@ -38,10 +38,10 @@ POLICY
 }
 
 ## Upload files to S3
-#resource "null_resource" "upload_to_s3" {
-#	provisioner "local-exec" {
-#		command = "aws s3 sync ${path.module}/source s3://${aws_s3_bucket.frontend.id}"
-#  	}
-#}
+resource "null_resource" "upload_to_s3" {
+	provisioner "local-exec" {
+		command = "aws s3 sync ${path.module}/source s3://${aws_s3_bucket.frontend.id}"
+  	}
+}
 
 
