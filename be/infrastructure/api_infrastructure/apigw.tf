@@ -26,6 +26,9 @@ resource "aws_api_gateway_deployment" "deployment_alpha" {
 		  aws_api_gateway_resource.search_resource,
 		  aws_api_gateway_method.search_method,
 		  aws_api_gateway_integration.search_integration,
+		  aws_api_gateway_resource.getitem_resource,
+		  aws_api_gateway_method.getitem_method,
+		  aws_api_gateway_integration.getitem_integration,
 		]))
 	
 	}

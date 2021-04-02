@@ -3,6 +3,8 @@
 
 ## Upload Lambda func
 
+
+### SEARCH API LAMBDA
 data "archive_file" "search-es-lambda_zip" {
 	type = "zip"
 	source_dir = "${path.module}/source/apigw-search-es-lambda"
@@ -26,6 +28,58 @@ resource "aws_lambda_function" "apigw-search-es-lambda" {
 		}
 }
 
+#### GET INDIVIDUAL DOC LAMBDA, Use the same layer as the search
+data "archive_file" "getitem-es-lambda_zip" {
+	type = "zip"
+	source_dir = "${path.module}/source/apigw-getitem-es-lambda"
+	output_path = "${path.module}/apigw-getitem-es-lambda.zip"
+}
+
+
+resource "aws_lambda_function" "apigw-getitem-es-lambda" {
+	filename = "${path.module}/apigw-getitem-es-lambda.zip"
+	function_name = "apigw-getitem-es-lambda"
+	role = aws_iam_role.getitem_es_lambda_role.arn
+	handler = "apigw-getitem-es.handler"
+	runtime = "python3.8"
+	source_code_hash = data.archive_file.getitem-es-lambda_zip.output_base64sha256
+	layers = [aws_lambda_layer_version.apigw-search-es-layer.arn] ## Just use the same layer
+
+	environment {
+		variables = {
+			es_domain_url = var.es_url
+			}
+		}
+}
+
+
+### SEARCH LAYER
+data "archive_file" "apigw-search-es-layer_zip" {
+	type = "zip"
+	source_dir = "${path.module}/source/apigw-search-es-layer/tozip"
+	output_path = "${path.module}/apigw-search-es-layer.zip"
+}
+
+resource "aws_lambda_layer_version" "apigw-search-es-layer" {
+	filename   = "${path.module}/apigw-search-es-layer.zip"
+	layer_name = "search_es_lambda_layer"
+	compatible_runtimes = ["python3.8"]
+	source_code_hash = data.archive_file.apigw-search-es-layer_zip.output_base64sha256
+}
+
+
+
+
+
+
+
+
+
+
+
+### the "Submit/Upload" function
+
+
 data "archive_file" "upload-ul-lambda_zip" {
 	type = "zip"
 	source_dir = "${path.module}/source/apigw-upload-ul-lambda"
@@ -48,18 +102,7 @@ resource "aws_lambda_function" "apigw-upload-ul-lambda" {
 
 }
 
-data "archive_file" "apigw-search-es-layer_zip" {
-	type = "zip"
-	source_dir = "${path.module}/source/apigw-search-es-layer/tozip"
-	output_path = "${path.module}/apigw-search-es-layer.zip"
-}
 
-resource "aws_lambda_layer_version" "apigw-search-es-layer" {
-	filename   = "${path.module}/apigw-search-es-layer.zip"
-	layer_name = "search_es_lambda_layer"
-	compatible_runtimes = ["python3.8"]
-	source_code_hash = data.archive_file.apigw-search-es-layer_zip.output_base64sha256
-}
 
 #data "archive_file" "apigw-upload-ul-layer_zip" {
 #	type = "zip"
@@ -74,11 +117,18 @@ resource "aws_lambda_layer_version" "apigw-search-es-layer" {
 #	source_code_hash = data.archive_file.apigw-upload-ul-layer_zip.output_base64sha256
 #}
 
-
+### Permisions
 
 resource "aws_lambda_permission" "apigw_search_lambda" {
 	action = "lambda:InvokeFunction"
 	function_name = aws_lambda_function.apigw-search-es-lambda.function_name
+	principal = "apigateway.amazonaws.com"
+	source_arn = "arn:aws:execute-api:${var.region}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.api.id}/*/*" 
+}
+
+resource "aws_lambda_permission" "apigw_getitem_lambda" {
+	action = "lambda:InvokeFunction"
+	function_name = aws_lambda_function.apigw-getitem-es-lambda.function_name
 	principal = "apigateway.amazonaws.com"
 	source_arn = "arn:aws:execute-api:${var.region}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.api.id}/*/*" 
 }
@@ -109,6 +159,10 @@ data "aws_iam_policy_document" "lambda_sts_assume" {
 
 resource "aws_iam_role" "search_es_lambda_role" {
 	name = "search_es_lambda_role"
+	assume_role_policy = data.aws_iam_policy_document.lambda_sts_assume.json
+}
+resource "aws_iam_role" "getitem_es_lambda_role" {
+	name = "getitem_es_lambda_role"
 	assume_role_policy = data.aws_iam_policy_document.lambda_sts_assume.json
 }
 
@@ -147,6 +201,17 @@ resource "aws_iam_policy" "combined_search_es_lambda" {
 }
 
 
+data "aws_iam_policy_document" "getitem_es_lambda" {
+	source_policy_documents = [
+		data.aws_iam_policy_document.lambda_cloudwatch_logs.json
+		]
+}
+
+resource "aws_iam_policy" "combined_getitem_es_lambda" {
+	policy = data.aws_iam_policy_document.getitem_es_lambda.json
+}
+
+
 data "aws_iam_policy_document" "upload_ul_lambda" {
 	source_policy_documents = [
 		data.aws_iam_policy_document.lambda_cloudwatch_logs.json
@@ -163,6 +228,12 @@ resource "aws_iam_policy_attachment" "search_es_attach" {
   name       = "search_es_lambda_attachment"
   roles      = [aws_iam_role.search_es_lambda_role.name] 
   policy_arn = aws_iam_policy.combined_search_es_lambda.arn
+}
+
+resource "aws_iam_policy_attachment" "getitem_es_attach" {
+  name       = "getitem_es_lambda_attachment"
+  roles      = [aws_iam_role.getitem_es_lambda_role.name] 
+  policy_arn = aws_iam_policy.combined_getitem_es_lambda.arn
 }
 
 resource "aws_iam_policy_attachment" "upload_ul_attach" {

@@ -45,6 +45,14 @@ resource "aws_elasticsearch_domain_policy" "main" {
             },
             "Action": "es:ESHttpGet",
             "Resource": "${aws_elasticsearch_domain.server.arn}/missing/_search"
+	},
+	{
+            "Effect": "Allow",
+            "Principal": {
+              "AWS": "*"
+            },
+            "Action": "es:ESHttpGet",
+            "Resource": "${aws_elasticsearch_domain.server.arn}/missing/_doc/*"
 	}
     ]
 }
